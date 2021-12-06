@@ -1,5 +1,6 @@
 import random
 import math
+from hit_object import HitObject
 
 '''
 Generate n number of random points
@@ -11,7 +12,7 @@ allowed y [150, 570]
 '''
 
 
-def new_map(n):
+def new_points(n):
 
     points = [(random.randint(150, 1130), random.randint(150, 570))]
 
@@ -26,3 +27,7 @@ def new_map(n):
                 temp = False
 
     return points
+
+
+def new_map(n):
+    return [HitObject(i[0], i[1]) for i in new_points(n)]
