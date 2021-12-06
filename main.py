@@ -2,16 +2,18 @@ import pygame
 import constants
 import assets
 
-WIN = pygame.display.set_mode((constants.WIDTH, constants.HEIGHT))
 pygame.display.set_caption('sotarks simulator')
-CURSOR_RECT = assets.CURSOR.get_rect()
-pygame.mouse.set_visible(False)
 
+game_status = 'start_screen'
 
-def draw():
+def draw(WIN):
     WIN.fill(constants.BLACK)
-    CURSOR_RECT.center = pygame.mouse.get_pos()
-    WIN.blit(assets.CURSOR, CURSOR_RECT)
+    if game_status == 'start_screen':
+        display.start_screen()
+    elif game_status == 'game':
+        display.game()
+    elif game_status == 'end_screen':
+        display.end_screen()
     pygame.display.update()
 
 def main():
@@ -23,7 +25,7 @@ def main():
             if event.type == pygame.QUIT:
                 run = False
 
-        draw()
+        draw(constants.WIN)
 
     pygame.quit()
 
