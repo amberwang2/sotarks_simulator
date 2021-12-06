@@ -11,7 +11,7 @@ allowed y [150, 570]
 '''
 
 
-def generator(n):
+def new_map(n):
 
     points = [(random.randint(150, 1130), random.randint(150, 570))]
 
