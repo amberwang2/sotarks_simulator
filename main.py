@@ -12,10 +12,15 @@ pygame.display.set_caption('sotarks simulator')
 pygame.mouse.set_visible(False)
 game_status = False
 font_48 = pygame.font.Font(os.path.join('assets', 'FiraCode-Regular.ttf'), 48)
-welcome_text = font_48.render("Press any key to start", True, WHITE)
+welcome_text = font_48.render("Press enter to start", True, WHITE)
+
+def change_status():
+    global game_status, current_map, current_time
+    current_time = 0
+    current_map = new_map(40)
+    game_status = not game_status
 
 def main():
-    global game_status
     clock = pygame.time.Clock()
     run = True
     while run:
@@ -25,7 +30,7 @@ def main():
                 run = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN and not game_status:
-                    game_status = True
+                    change_status()
 
         if game_status:
             game()
@@ -42,8 +47,14 @@ def start_screen():
     pygame.display.update()
 
 def game():
+    global current_time
     WIN.fill(BLACK)
     # stuff
+    update_objects(current_map, current_time)
+    for i in current_map:
+        if i.field:
+            WIN.blit(load_assets.CIRCLE, (i.x, i.y))
+    current_time += 10
     # end stuff
     CURSOR_RECT.center = pygame.mouse.get_pos()
     WIN.blit(load_assets.CURSOR, CURSOR_RECT)
@@ -55,8 +66,7 @@ def end_screen():
     WIN.blit(load_assets.CURSOR, CURSOR_RECT)
     pygame.display.update()
 
-def new_points(n):
-
+def new_map(n):
     points = [(random.randint(150, 1130), random.randint(150, 570))]
 
     for i in range(n - 1):
@@ -68,10 +78,7 @@ def new_points(n):
                 points.append(point)
                 temp = False
 
-    return points
-
-def new_map(n):
-    return [HitObject(i[0], i[1]) for i in new_points(n)]
+    return [HitObject(points[i][0], points[i][1], i*600 + 3000) for i in range(len(points))]
 
 '''
 Generate n number of random points
@@ -82,8 +89,12 @@ allowed x [150, 1130]
 allowed y [150, 570]
 '''
 
-def update_objects(objects, timing_point):
-    pass
+def update_objects(objects, time):
+    for i in objects:
+        if i.timing_point - 600 == time:
+            i.field = True
+        if i.timing_point + 120 == time:
+            i.field = False
 
 class HitObject: # circle size 128x128
     field = False # is the object on field?
