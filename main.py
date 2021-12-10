@@ -13,12 +13,14 @@ pygame.mouse.set_visible(False)
 game_status = False
 font_48 = pygame.font.Font(os.path.join('assets', 'FiraCode-Regular.ttf'), 48)
 welcome_text = font_48.render("Press enter to start", True, WHITE)
+results_screen = False
 
 def change_status():
     global game_status, current_map, current_time
-    current_time = 0
-    current_map = new_map(40)
     game_status = not game_status
+    current_time = 0
+    if game_status:
+        current_map = new_map(40)
 
 def main():
     clock = pygame.time.Clock()
@@ -53,7 +55,10 @@ def game():
     update_objects(current_map, current_time)
     for i in current_map:
         if i.field:
-            WIN.blit(load_assets.CIRCLE, (i.x, i.y))
+            WIN.blit(load_assets.CIRCLE, (i.x - 64, i.y - 64))
+            if i.field_time < 600:
+                scaled = pygame.transform.scale(load_assets.A_CIRCLE, (i.approach_mult, i.approach_mult))
+                WIN.blit(scaled, (i.x - (scaled.get_width), i.y - (scaled.get_height)))
     current_time += 10
     # end stuff
     CURSOR_RECT.center = pygame.mouse.get_pos()
@@ -101,7 +106,7 @@ class HitObject: # circle size 128x128
     hit_window = False # is the hit window for the object active?
     field_time = 0  # time object has been on field in ms
     opacity = field_time / 400 if field_time <= 400 else 1  # opacity of object
-    approach_mult = 2 - field_time / 400  # size of approach circle
+    approach_mult = round(134 * (2 - field_time / 400))  # size of approach circle
 
     def __init__(self, x, y, timing_point):
         self.x = x
