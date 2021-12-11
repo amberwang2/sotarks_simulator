@@ -58,7 +58,7 @@ def game():
             WIN.blit(load_assets.CIRCLE, (i.x - 64, i.y - 64))
             if i.field_time < 600:
                 scaled = pygame.transform.scale(load_assets.A_CIRCLE, (i.approach_mult, i.approach_mult))
-                WIN.blit(scaled, (i.x - (scaled.get_width), i.y - (scaled.get_height)))
+                WIN.blit(scaled, (i.x - (scaled.get_width()//2), i.y - (scaled.get_height()//2)))
     current_time += 10
     # end stuff
     CURSOR_RECT.center = pygame.mouse.get_pos()
@@ -100,20 +100,24 @@ def update_objects(objects, time):
             i.field = True
         if i.timing_point + 120 == time:
             i.field = False
+        if i.field:
+            i.updater()
 
 class HitObject: # circle size 128x128
     field = False # is the object on field?
     hit_window = False # is the hit window for the object active?
     field_time = 0  # time object has been on field in ms
-    opacity = field_time / 400 if field_time <= 400 else 1  # opacity of object
-    approach_mult = round(134 * (2 - field_time / 400))  # size of approach circle
+    hit = False
+    score = None
 
     def __init__(self, x, y, timing_point):
         self.x = x
         self.y = y
         self.timing_point = timing_point
 
-    def counter(self):
+    def updater(self):
+        self.approach_mult = round(134 * (3 - self.field_time / 200)) if self.field_time <= 400 else 1
+        self.opacity = self.field_time / 400 if self.field_time <= 400 else 1
         self.field_time += 10
 
 
